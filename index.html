@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--to allow a responsive design for mobile devices-->
+        <title>After School Classes</title>
+        <link rel="stylesheet" href="styles.css" />
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+        <!-- Import Vue.js -->
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div id="app">
+            <!--Vue.js application root element-->
+            <header>
+                <h1>{{ sitename }}</h1>
+                <button @click="showCheckout">
+                    {{ cartItemCount }}
+                    <!--Displays the current item count in the cart-->
+                    <span class="fas fa-shopping-cart"></span> Checkout
+                    <!--the shopping cart icon-->
+                </button>
+            </header>
+
+            <main>
+                <div class="sort-container" v-if="showProduct">
+                    <label for="sortOptions">Sort:</label>
+                    <select id="sortOptions" v-model="selectedSort" @change="sortLessons">
+                        <!--the drop down to select sorting criteria-->
+                        <option value="highToLow">Highest Price to Lowest Price</option>
+                        <option value="lowToHigh">Lowest Price to Highest Price</option>
+                        <option value="availability">Available Spots</option>
+                    </select>
+                </div>
+
+                <div v-if="showProduct">
+                    <div v-for="lesson in sortedLessons" :key="lesson.id" class="lesson-card">
+                        <img :src="lesson.image" :alt="lesson.subject" class="lesson-image" />
+
+                        <div class="lesson-info">
+                            <h2>{{ lesson.subject }}</h2>
+                            <p>Location: {{ lesson.location }}</p>
+                            <p>Price: AED{{ (lesson.price * conversionRate).toFixed(2) }}</p>
+                            <p>Available Spaces: {{ lesson.spaces }}</p>
+                        </div>
+                        <button
+                            @click="addToCart(lesson)"
+                            :disabled="!canAddToCart(lesson)"
+                            class="add-to-cart-btn"
+                        >
+                            Add to Cart
+                            <!--button to add lessons to cart, disabled if spaces are unavailable-->
+                        </button>
+                    </div>
+                </div>
+
+                <!--checkout view, rendered if showProduct is false-->
+                <div v-else>
+                    <h2>Checkout</h2>
+                    <form @submit.prevent="submitOrder">
+                        <!--to prevent default form submission and call submitOrder method-->
+                        <input v-model="order.name" placeholder="Name" required />
+                        <input v-model="order.phone" placeholder="Phone" required />
+                        <button type="submit">Submit Order</button>
+                    </form>
+                    <button @click="showCheckout">Return to Products</button>
+                </div>
+            </main>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
